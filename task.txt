@@ -1,0 +1,10 @@
+1. User should see profile update form if that user
+is currently logged in and viewing their profile.
+
+2. User can visit profile of any user but can not update them
+
+3. when user will update their profile, POST request should be
+submitted to `profile_update_view`.
+
+4. After saving their profile, user should be redirected to
+profile view page and should see their updated profile.
