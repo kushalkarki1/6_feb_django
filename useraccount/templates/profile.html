@@ -2,9 +2,17 @@
 
 {% block content %}
 
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
 {% if form %}
 <div>
-    <form method="post" action="" enctype="multipart/form-data">{% csrf_token %}
+    <form method="post" action="{% url 'user:profile_update' %}" enctype="multipart/form-data">{% csrf_token %}
         {{ form.as_p }}
         <input type="submit" value="Submit" name="submit" class="btn btn-info" />
     </form>

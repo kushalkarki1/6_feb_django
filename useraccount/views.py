@@ -53,15 +53,17 @@ class SignupView(CreateView):
 def profile_view(request, username):
     user = get_object_or_404(User, username=username)
     form = None
+    is_edit=False
     if request.user.is_authenticated and request.user.username == username:
         user = request.user
+        is_edit = True
         initial_data = {
             "first_name": user.first_name,
             "last_name": user.last_name,
             "email": user.email,
         }
         form = ProfileForm(instance=user.profile, initial=initial_data)
-    return render(request, "profile.html", {"user": user, "form": form})
+    return render(request, "profile.html", {"user": user, "form": form, "is_edit": is_edit})
 
 
 @login_required
@@ -70,7 +72,10 @@ def profile_update_view(request):
     if form.is_valid():
         user = request.user
         user.first_name = form.cleaned_data.get("first_name")
+        user.last_name = form.cleaned_data.get("last_name")
+        user.email = form.cleaned_data.get("email")
         user.save()
         form.save()
-        return HttpResponseRedirect(reverse(""))
+        messages.add_message(request, messages.SUCCESS, "Your profile updated successfully.")
+        return HttpResponseRedirect(reverse("user:profile", args=(request.user.username,))) # /user/profile/user1/
     return render(request, "profile.html", {"form": form})
