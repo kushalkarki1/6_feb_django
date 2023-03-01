@@ -22,4 +22,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("", include("post.urls", namespace="post")),
     path("user/", include("useraccount.urls", namespace="user")),
+    path("chat/", include("chat.urls", namespace="chat")),
 ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

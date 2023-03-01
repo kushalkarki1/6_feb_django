@@ -24,7 +24,10 @@
                     {% endif %}
                 </div>
                 <div class="card-footer">
-                    <span>{{post.likes.count}} Likes</span>
+                    <span>
+                        <span id="like_count_{{post.id}}">{{post.likes.count}}</span>
+                        <a class="like_post" id="{{post.id}}" href="{% url 'post:like_post' post.id %}"><i class="bi bi-hand-thumbs-up"></i></a>
+                    </span>
                     <span>{{post.comments.count}} comments</span>
                     {% if request.user == post.user %}
                     <div class="float-end">
@@ -78,7 +81,24 @@
 
         $("#del-btn").click(function(){
             $("#del-form").submit();
-        })
+        });
+
+        $(".like_post").click(function(evt){
+            evt.preventDefault();
+            let postid = evt.currentTarget.id;
+            let url = evt.currentTarget.href;
+            $.ajax({
+                'url': url,
+                'method': 'GET',
+                'dataType': 'json',
+                success:function(res){
+                    $("#like_count_"+postid).html(res.likes);
+                },
+                error:function(res){
+                    console.log(res);
+                }
+            })
+        });
     });
 </script>
 {% endblock script %}

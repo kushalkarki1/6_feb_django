@@ -1,7 +1,7 @@
 from django.shortcuts import render, reverse, get_object_or_404
-from post.models import Post, Status
+from post.models import Post, Status, Like
 from post.forms import PostForm
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
@@ -48,3 +48,12 @@ def delete_post(request):
     post.delete()
     messages.add_message(request, messages.INFO, "Your post removed successfully.")
     return HttpResponseRedirect(reverse("post:home"))
+
+
+def like_post(request, postid):
+    post = get_object_or_404(Post, id=postid)
+    user = request.user
+    Like.objects.update_or_create(post=post, user=user, is_liked=True)
+    total_likes = post.likes.count()
+    return JsonResponse({"likes": total_likes}, safe=False)
+
