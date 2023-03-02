@@ -25,10 +25,15 @@
                 </div>
                 <div class="card-footer">
                     <span>
-                        <span id="like_count_{{post.id}}">{{post.likes.count}}</span>
+                        <span id="like_count_{{post.id}}">{{post.likes_count}}</span>
                         <a class="like_post" id="{{post.id}}" href="{% url 'post:like_post' post.id %}"><i class="bi bi-hand-thumbs-up"></i></a>
                     </span>
-                    <span>{{post.comments.count}} comments</span>
+                    <span>
+                        <span>{{post.comments.count}}</span>
+                        <a href="{% url 'post:comment_post' post.id %}">
+                            <i class="bi bi-chat-text"></i>
+                        </a>
+                    </span>
                     {% if request.user == post.user %}
                     <div class="float-end">
                         <a class="text-decoration-none" href="{% url 'post:edit_post' post.id %}">Edit</a>

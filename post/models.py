@@ -24,6 +24,10 @@ class Post(TimeStampModel):
     def __str__(self):
         return str(self.id)
 
+    @property
+    def likes_count(self):
+        return self.likes.filter(is_liked=True).count()
+
     # class Meta:
     #     ordering = ["-created_at", ]
 

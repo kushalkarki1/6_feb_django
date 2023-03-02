@@ -1,6 +1,6 @@
 from django.shortcuts import render, reverse, get_object_or_404
 from post.models import Post, Status, Like
-from post.forms import PostForm
+from post.forms import PostForm, CommentForm
 from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -50,10 +50,30 @@ def delete_post(request):
     return HttpResponseRedirect(reverse("post:home"))
 
 
+@login_required
 def like_post(request, postid):
     post = get_object_or_404(Post, id=postid)
     user = request.user
-    Like.objects.update_or_create(post=post, user=user, is_liked=True)
-    total_likes = post.likes.count()
+    like, created = Like.objects.get_or_create(post=post, user=user)
+    if not created:
+        if like.is_liked:
+            like.is_liked = False
+        else:
+            like.is_liked = True
+        like.save()
+    total_likes = post.likes.filter(is_liked=True).count()
     return JsonResponse({"likes": total_likes}, safe=False)
 
+@login_required
+def comment_post(request, postid):
+    post = get_object_or_404(Post, id=postid)
+    comments = post.comments.all()
+    form = CommentForm(request.POST or None)
+    if form.is_valid():
+        comment = form.save(commit=False)
+        comment.post = post
+        comment.user = request.user
+        comment.save()
+        return HttpResponseRedirect(reverse("post:comment_post", args=(postid, )))
+    context = {"post": post, "comments": comments, "form": form}
+    return render(request, "post_comments.html", context)
